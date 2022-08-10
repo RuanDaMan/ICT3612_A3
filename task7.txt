@@ -1,0 +1,79 @@
+//////// PHP //////////////
+function getRatingCode($percentage)
+{
+    if ($percentage > 100 || $percentage < 0) {
+        return -1;
+    }
+    if (100 >= $percentage && $percentage >= 80) {
+        return 7;
+    } elseif (79 >= $percentage && $percentage >= 70) {
+        return 6;
+    } elseif (69 >= $percentage && $percentage >= 60) {
+        return 5;
+    } elseif (59 >= $percentage && $percentage >= 50) {
+        return 4;
+    } elseif (49 >= $percentage && $percentage >= 40) {
+        return 3;
+    } elseif (39 >= $percentage && $percentage >= 30) {
+        return 2;
+    } elseif (29 >= $percentage && $percentage >= 0) {
+        return 1;
+    }
+}
+
+function getRatingDescription($code)
+{
+    switch ($code) {
+        case 1:
+            return "Not Achieved";
+        case 2:
+            return "Elementary";
+        case 3:
+            return "Moderate";
+        case 4:
+            return "Adequate";
+        case 5:
+            return "Substantial";
+        case 6:
+            return "Meritorious";
+        case 7:
+            return "Outstanding";
+        default:
+            return "Invalid Code";
+    }
+}
+/////////////////////////////////////
+
+/////////// HTML /////////////////
+
+////////// (a) ///////////
+
+        $num = 1;
+        for ($i = 0; $i < 20; $i++) {
+            echo $num % 2 == 0 ? "[{$num}] &nbsp;" : "{$num} &nbsp;";
+            $num += $i;
+
+/////////////////////////////
+////////// (b) /////////////
+        $num = 1;
+        $i = 0;
+        while ($i < 20) {
+            echo $num % 2 == 0 ? "{$num} &nbsp;" : "{{$num}} &nbsp;";
+            $num += $i;
+            $i++;
+        }
+////////////////////////
+
+/////// CALLING FIRST FUNCTION /////////
+        <tr>
+            <td>5</td>
+            <td><?php echo getRatingCode(5) ?></td>
+        </tr>
+///////////////////////////////////////
+
+/////// CALLING SECOND FUNCTION /////////
+        <tr>
+            <td>1</td>
+            <td><?php echo getRatingDescription(1) ?></td>
+        </tr>
+///////////////////////////////////////

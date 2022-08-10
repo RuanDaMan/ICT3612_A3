@@ -1,0 +1,72 @@
+///////////// PHP ////////////////
+function getDateObject($birthday)
+{
+    $birthday = $birthday->setTime(0, 0, 0, 0);
+    $dateObj = new stdClass;
+    $dateObj->formattedDate = $birthday->format("d/m/Y");
+    $dateObj->age = ($birthday->diff(new DateTime()))->y;
+    $dateObj->birthdayMessage = getBirthdayMessage($birthday);
+    return $dateObj;
+}
+
+function getBirthdayMessage($birthday)
+{
+    $sameYearDate = new DateTime();
+    $sameYearDate->setDate($birthday->format("Y"), $sameYearDate->format("m"), $sameYearDate->format("d"))->setTime(0, 0, 0, 0);
+    if ($birthday > $sameYearDate) {
+        return "Your birthday is yet to come this year";
+    } elseif ($birthday == $sameYearDate) {
+        return "Its your birthday today";
+    } elseif ($birthday < $sameYearDate) {
+        return "Your Birthday has already passed";
+    }
+    return "N/A";
+}
+
+///////////////////////////////////////
+
+///////////////////// HTML ///////////
+
+  <table>
+        <tr>
+            <td style="border: solid 1px" colspan="2">
+                Date: 1980-03-29
+            </td>
+        </tr>
+        <?php
+        $dateObj = getDateObject(new DateTime("1980-03-29"));
+        echo "<tr>
+                <td style=\"border: solid 1px\">
+                    Format:
+                </td>
+                <td style=\"border: solid 1px\">
+                    {$dateObj->formattedDate}
+                </td>
+
+              </tr>";
+
+        echo "<tr>
+                <td style=\"border: solid 1px\">
+                    Age:
+                </td>
+                <td style=\"border: solid 1px\">
+                    {$dateObj->age}
+                </td>
+
+              </tr>";
+
+        echo "<tr>
+                <td style=\"border: solid 1px\">
+                    Birthday Message:
+                </td>
+                <td style=\"border: solid 1px\">
+                    {$dateObj->birthdayMessage}
+                </td>
+
+              </tr>"
+
+
+        ?>
+    </table>
+
+/////////////////////////////////////

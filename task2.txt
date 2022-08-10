@@ -1,0 +1,28 @@
+$student_name = '';
+
+$show_form = true;
+if (isset($_GET['student_name'])) {
+
+    $show_form = false;
+    $student_name = $_GET['student_name'];
+}
+
+
+$num_modules = 0;
+
+if (isset($_GET['num_modules'])) {
+    $num_modules = $_GET['num_modules'];
+}
+
+
+$bursary_amount = 0;
+
+if (isset($_GET['bursary_amount'])) {
+    $bursary_amount = $_GET['bursary_amount'];
+}
+
+
+const cost_per_module = 1825;
+
+$total_fee = cost_per_module * $num_modules;
+$outstanding_fee = $total_fee - $bursary_amount;
