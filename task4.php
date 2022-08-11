@@ -1,120 +1,73 @@
 <?php
 
-
-$servername = "localhost";
-//$username = "id17186169_root";
-//$password = "k&V>~Ld0Kvfz?|nZ";
-$username = "root";
-$password = "";
-
-$has_error = false;
-$error_msg = "";
-
-$doctors = array();
-$show_fee = false;
-
-
-
-
-if (isset($_POST["view"])) {
-
-    if (isset($_POST["fee"])) {
-        $GLOBALS['doctors'] = fetchAll($_POST["view"], $_POST["fee"]);
-    } else {
-        $GLOBALS['doctors'] = fetchAll($_POST["view"]);
-    }
-}
-
-
-function fetchAll($view_mode, $fee = 0)
+class Validate
 {
-    try {
-        $servername = $GLOBALS['servername'];
-        $username = $GLOBALS['username'];
-        $password = $GLOBALS['password'];
-        $conn = new PDO("mysql:host=$servername;dbname=ass3task4", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if ($view_mode == "all") {
+//    public static $user_name_expression = '/^(?=[a-z]){4,4}/';
+    public static $user_name_expression = '/^[a-z]{4,4}$/';
+    public static $password_expression = '/^[0-9]{6,8}$/';
 
-            return $conn->query("SELECT * FROM doctors");
-        } elseif ($view_mode == "below_fee") {
+    public function checkUsername($username)
+    {
 
-            return $conn->query("SELECT * FROM doctors WHERE fee < {$fee}");
-        } else {
+        $valid = preg_match(self::$user_name_expression, $username);
 
-            echo "View Mode: {$view_mode}";
-        }
-    } catch (PDOException $e) {
-        $GLOBALS['has_error'] = true;
-        $GLOBALS['error_msg'] = "Connection failed: " . $e->getMessage();
+        return $valid ? "Username is OK" : "Username is not valid!";
+    }
+
+    public function checkPassword($password)
+    {
+        $valid = preg_match(self::$password_expression, $password);
+
+        return $valid ? "Password is OK" : "Password is not valid!";
     }
 }
+
+$validate = new Validate();
 
 
 ?>
 
 
-<html>
+<html lang="en">
 <body>
 <?php include 'menu.inc'; ?>
 <main>
     <h1>Task 4</h1>
+    <h3>TASK a</h3>
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
+        <div id="data" style="justify-content: space-between">
+            <div style="display: flex">
+            <label>Username:
+                <input name="username" value="<?php echo isset($_POST["username"]) ? $_POST["username"] : "" ?>">
 
-    <?php if ($has_error): ?>
-        <p><?php echo $error_msg ?></p>
-    <?php else: ?>
-
-
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-            <div id="data">
-                <div>
-                    <label for="view">View Mode</label>
-                    <select onchange="" name="view" id="view">
-                        <option value="all">All</option>
-                        <option value="below_fee">Below Fee</option>
-                    </select>
-
-
-                    <label for="fee">Fee:</label>
-                    <input type="number" step=".01" id="fee" name="fee">
-
-                </div>
+                <?php if (isset($_POST["username"])): ?>
+                    <?php echo $validate->checkUsername($_POST["username"]) ?>
+                <?php endif; ?>
+            </Label>
             </div>
-            <div id="buttons">
-                <label>&nbsp;</label>
-                <input type="submit" value="Submit"><br>
+            <div style="display: flex">
+            <label>Password:
+                <input type="password" name="password">
+
+                <?php if (isset($_POST["password"])): ?>
+                    <?php echo $validate->checkPassword($_POST["password"]) ?>
+                <?php endif; ?>
+            </Label>
             </div>
-        </form>
+        </div>
+        <input type="submit" value="Submit"><br>
+    </form>
 
-        <?php ?>
-        <table>
-            <thead>
-            <tr>
-                <th>Practice Number</th>
-                <th>Name</th>
-                <th>Specialty</th>
-                <th>Fee</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($doctors as $doctor) { ?>
-                <tr>
-                    <td><?php echo $doctor['practicenumber']; ?></td>
-                    <td><?php echo $doctor['name'] ?></td>
-                    <td><?php echo $doctor['specialty']; ?></td>
-                    <td><?php echo $doctor['fee']; ?></td>
-                </tr>
-
-            <?php } ?>
-
-            </tbody>
-        </table>
-
-    <?php endif; ?>
+    <h3>TASK b</h3>
+    <ul>
+        <li>asd: <?php echo preg_match("/^[01]?\d\/[0-3]\d\/\d{4}$/", "asd") ? "Matches" : "Does not match"?></li>
+        <li>12/23/5545: <?php echo preg_match("/^[01]?\d\/[0-3]\d\/\d{4}$/", "12/23/5545") ? "Matches" : "Does not match"?></li>
+    </ul>
 
     <iframe src="task4.txt" height="500" width="1500">
-        Your browser does not support iframes. </iframe>
+        Your browser does not support iframes.
+    </iframe>
 </main>
 
 </body>

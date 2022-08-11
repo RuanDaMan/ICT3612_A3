@@ -1,71 +1,23 @@
-//////////////PHP ////////////////////////
-
-$servername = "localhost";
-$username = "id17186169_root";
-$password = "k&V>~Ld0Kvfz?|nZ";
-
-$has_error = false;
-$error_msg = "";
-
-$doctors = array();
-$show_fee = false;
-
-
-
-
-if (isset($_POST["view"])) {
-
-    if (isset($_POST["fee"])) {
-        $GLOBALS['doctors'] = fetchAll($_POST["view"], $_POST["fee"]);
-    } else {
-        $GLOBALS['doctors'] = fetchAll($_POST["view"]);
-    }
-}
-
-
-function fetchAll($view_mode, $fee = 0)
+class Validate
 {
-    try {
-        $servername = $GLOBALS['servername'];
-        $username = $GLOBALS['username'];
-        $password = $GLOBALS['password'];
-        $conn = new PDO("mysql:host=$servername;dbname=id17186169_ass3task4", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if ($view_mode == "all") {
+//    public static $user_name_expression = '/^(?=[a-z]){4,4}/';
+    public static $user_name_expression = '/^[a-z]{4,4}$/';
+    public static $password_expression = '/^[0-9]{6,8}$/';
 
-            return $conn->query("SELECT * FROM doctors");
-        } elseif ($view_mode == "below_fee") {
+    public function checkUsername($username)
+    {
 
-            return $conn->query("SELECT * FROM doctors WHERE fee < {$fee}");
-        } else {
+        $valid = preg_match(self::$user_name_expression, $username);
 
-            echo "View Mode: {$view_mode}";
-        }
-    } catch (PDOException $e) {
-        $GLOBALS['has_error'] = true;
-        $GLOBALS['error_msg'] = "Connection failed: " . $e->getMessage();
+        return $valid ? "Username is OK" : "Username is not valid!";
+    }
+
+    public function checkPassword($password)
+    {
+        $valid = preg_match(self::$password_expression, $password);
+
+        return $valid ? "Password is OK" : "Password is not valid!";
     }
 }
-////////////////////////////////////////////////////////////////////////////
 
-//////////////// HTML ////////////////////////////////
-
-
-    <? if ($has_error): ?>
-        <p><?php echo $error_msg ?></p>
-    <? else: ?>
-    ///// TABLE /////////
-                <?php foreach ($doctors as $doctor) { ?>
-                    <tr>
-                        <td><?php echo $doctor['practicenumber']; ?></td>
-                        <td><?php echo $doctor['name'] ?></td>
-                        <td><?php echo $doctor['specialty']; ?></td>
-                        <td><?php echo $doctor['fee']; ?></td>
-                    </tr>
-
-                <?php } ?>
-        <? endif; ?>
-
-/////////////////////////////////////////////////////
-
-
+$validate = new Validate();
