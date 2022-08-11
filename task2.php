@@ -1,98 +1,100 @@
 <?php
-$student_name = '';
 
-$show_form = true;
-if (isset($_GET['student_name'])) {
+$square = null;
+$side_length = 1;
 
-    $show_form = false;
-    $student_name = $_GET['student_name'];
+class Square
+{
+
+    public $name;
+    public $side_length;
+
+    public function __construct($side_length)
+    {
+        $this->side_length = $side_length;
+        $this->name = 'Square';
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getSideLength()
+    {
+        return $this->side_length;
+    }
+
+    public function setSideLength($side_length)
+    {
+        $this->side_length = $side_length;
+    }
+
+    public function getArea()
+    {
+        return $this->side_length * $this->side_length;
+    }
+
+    public function getPerimeter()
+    {
+        return $this->side_length * 4;
+    }
 }
 
-
-$num_modules = 0;
-
-if (isset($_GET['num_modules'])) {
-    $num_modules = $_GET['num_modules'];
+if (isset($_POST["side_length"])) {
+    $side_length = $_POST["side_length"];
+    $square = new Square($side_length);
 }
-
-
-$bursary_amount = 0;
-
-if (isset($_GET['bursary_amount'])) {
-    $bursary_amount = $_GET['bursary_amount'];
-}
-
-
-const cost_per_module = 1825;
-
-$total_fee = cost_per_module * $num_modules;
-$outstanding_fee = $total_fee - $bursary_amount;
-
 
 ?>
 
 
-<html>
+<html lang="en">
 <body>
-<?php include 'menu.inc';?>
+<?php include 'menu.inc'; ?>
 
 <main>
     <h1>Task 2</h1>
 
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 
         <div id="data">
-            <label>Student Name:</label>
-            <input type="text" name="student_name"><br>
 
-            <label>Number of Modules Registered:</label>
-            <input type="number" name="num_modules"><br>
-
-            <label>Bursary Amount:</label>
-            <input type="number" name="bursary_amount"><br>
+            <label>Side Length:
+                <input type="number" name="side_length" step="1">
+            </Label>
         </div>
-
-        <div id="buttons">
-            <label>&nbsp;</label>
-            <input type="submit" value="Submit"><br>
-        </div>
-
+        <input type="submit" value="Submit"><br>
     </form>
-    <div>
-        <label>Student Name :</label>
-        <span><?php echo $student_name; ?></span>
-        <br>
 
-        <label>Number of modules registered:</label>
-        <span><?php echo $num_modules ?></span>
-        <br>
+    <?php if ($square != null): ?>
+        <ul>
+            <li>getName() | <?php echo $square->getName() ?></li>
+            <li>getSideLength() | <?php echo $square->getSideLength() ?></li>
+            <li>getArea() | <?php echo $square->getArea() ?></li>
+            <li>getPerimeter() | <?php echo $square->getPerimeter() ?></li>
+            <li>setSideLength | <?php
 
-        <label>Cost Per Module:</label>
-        <span>R <?php echo cost_per_module ?></span>
-        <br>
+                if (isset($_POST['side_length']) && isset($_POST['set_side_length'])) {
+                    $square->setSideLength($_POST['side_length']);
+                }
 
-        <label>Total Fee:</label>
-        <span>R <?php echo $total_fee; ?></span>
-        <br>
+                ?>
 
-        <label>Bursary Amount:</label>
-        <span>R <?php echo $bursary_amount; ?></span>
-        <br>
+                <form method="post">
+                    <label> Side Length:
+                        <input type="number" name="side_length" value="<?php echo $side_length ?>"/>
+                    </label>
 
-        <label>Outstanding Fee:</label>
-        <span>R <?php echo $outstanding_fee; ?></span>
-        <br>
+                    <input type="submit" name="set_side_length" value="Set"/>
+                </form>
+            </li>
+        </ul>
+    <?php endif; ?>
 
-
-    </div>
-
-    <br>
-    <br>
-    <br>
-    <br>
-
-    <iframe src="task2.txt" height="500" width="500">
-        Your browser does not support iframes. </iframe>
+    <iframe src="task2.txt" height="400" width="1200">
+        Your browser does not support iframes.
+    </iframe>
 </main>
 
 </body>

@@ -1,28 +1,76 @@
-$student_name = '';
+<?php
 
-$show_form = true;
-if (isset($_GET['student_name'])) {
+$square = null;
+$side_length = 1;
 
-    $show_form = false;
-    $student_name = $_GET['student_name'];
+class Square
+{
+
+    public $name;
+    public $side_length;
+
+    public function __construct($side_length)
+    {
+        $this->side_length = $side_length;
+        $this->name = 'Square';
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getSideLength()
+    {
+        return $this->side_length;
+    }
+
+    public function setSideLength($side_length)
+    {
+        $this->side_length = $side_length;
+    }
+
+    public function getArea()
+    {
+        return $this->side_length * $this->side_length;
+    }
+
+    public function getPerimeter()
+    {
+        return $this->side_length * 4;
+    }
 }
 
-
-$num_modules = 0;
-
-if (isset($_GET['num_modules'])) {
-    $num_modules = $_GET['num_modules'];
+if (isset($_POST["side_length"])) {
+    $side_length = $_POST["side_length"];
+    $square = new Square($side_length);
 }
 
+?>
 
-$bursary_amount = 0;
+///////////////////////////////////////////////////////////////////////
+INNER HTML
+<?php if ($square != null): ?>
+        <ul>
+            <li>getName() | <?php echo $square->getName() ?></li>
+            <li>getSideLength() | <?php echo $square->getSideLength() ?></li>
+            <li>getArea() | <?php echo $square->getArea() ?></li>
+            <li>getPerimeter() | <?php echo $square->getPerimeter() ?></li>
+            <li>setSideLength | <?php
 
-if (isset($_GET['bursary_amount'])) {
-    $bursary_amount = $_GET['bursary_amount'];
-}
+                if (isset($_POST['side_length']) && isset($_POST['set_side_length'])) {
+                    $square->setSideLength($_POST['side_length']);
+                }
 
+                ?>
 
-const cost_per_module = 1825;
+                <form method="post">
+                    <label> Side Length:
+                        <input type="number" name="side_length" value="<?php echo $side_length ?>"/>
+                    </label>
 
-$total_fee = cost_per_module * $num_modules;
-$outstanding_fee = $total_fee - $bursary_amount;
+                    <input type="submit" name="set_side_length" value="Set"/>
+                </form>
+            </li>
+        </ul>
+    <?php endif; ?>

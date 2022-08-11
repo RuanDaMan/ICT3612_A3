@@ -2,8 +2,10 @@
 
 
 $servername = "localhost";
-$username = "id17186169_root";
-$password = "k&V>~Ld0Kvfz?|nZ";
+//$username = "id17186169_root";
+//$password = "k&V>~Ld0Kvfz?|nZ";
+$username = "root";
+$password = "";
 
 $has_error = false;
 $error_msg = "";
@@ -30,7 +32,7 @@ function fetchAll($view_mode, $fee = 0)
         $servername = $GLOBALS['servername'];
         $username = $GLOBALS['username'];
         $password = $GLOBALS['password'];
-        $conn = new PDO("mysql:host=$servername;dbname=id17186169_ass3task4", $username, $password);
+        $conn = new PDO("mysql:host=$servername;dbname=ass3task4", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         if ($view_mode == "all") {
 
@@ -59,9 +61,9 @@ function fetchAll($view_mode, $fee = 0)
     <h1>Task 4</h1>
 
 
-    <? if ($has_error): ?>
+    <?php if ($has_error): ?>
         <p><?php echo $error_msg ?></p>
-    <? else: ?>
+    <?php else: ?>
 
 
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
@@ -109,7 +111,7 @@ function fetchAll($view_mode, $fee = 0)
             </tbody>
         </table>
 
-    <? endif; ?>
+    <?php endif; ?>
 
     <iframe src="task4.txt" height="500" width="1500">
         Your browser does not support iframes. </iframe>
