@@ -69,7 +69,7 @@ if ($action == 'list_levies') {
 
 <main>
     <?php include 'task9menu.inc'; ?>
-    <h2>Companies</h2>
+
     <div class="row">
         <div class="column">
             <h3>Levies</h3>

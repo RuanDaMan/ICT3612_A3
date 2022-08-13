@@ -1,24 +1,28 @@
 <?php
+require('trucks_db.php');
 require('company_db.php');
 
-$companies = array();
+$trucks = array();
+$companies = get_companies();
 if (isset($_POST['action'])) {
     $action = $_POST['action'];
 } else if (isset($_GET['action'])) {
     $action = $_GET['action'];
 } else {
-    $action = 'list_companies';
+    $action = 'list_trucks';
 }
 
-if ($action == 'list_companies') {
-    $GLOBALS['companies'] = get_companies();
-} elseif ($action == 'delete_company') {
-    delete_company($_POST['company_id']);
-    $GLOBALS['companies'] = get_companies();
-} elseif ($action == 'add_company') {
-    add_company($_POST['company_name']);
-    $GLOBALS['companies'] = get_companies();
+if ($action == 'list_trucks') {
+    $GLOBALS['trucks'] = get_trucks();
+} elseif ($action == 'delete_truck') {
+    delete_truck($_POST['truck_id']);
+    $GLOBALS['trucks'] = get_trucks();
+} elseif ($action == 'add_truck') {
+    add_truck($_POST['company_id'], $_POST['truck_name']);
+    $GLOBALS['trucks'] = get_trucks();
 }
+
+
 ?>
 
 <html lang="en">
@@ -35,7 +39,7 @@ if ($action == 'list_companies') {
 
     .column {
         float: left;
-        width: 30%;
+        width: 50%;
         padding: 2px;
     }
 
@@ -69,14 +73,23 @@ if ($action == 'list_companies') {
 
 <main>
     <?php include 'task9menu.inc'; ?>
+
     <div class="row">
         <div class="column">
-            <h3>Companies</h3>
+            <h3>Trucks</h3>
             <div>
                 <form action="" method="post">
-                    <input type="hidden" name="action" value="add_company"/>
-                    <label>Company Name:
-                        <input name="company_name"/>
+                    <input type="hidden" name="action" value="add_truck"/>
+                    <label>Truck Name:
+                        <input name="truck_name"/>
+                    </label>
+                    <label>Companies:
+                        <select name="company_id">
+                            <option value="">-----------------</option>
+                            <?php foreach ($companies as $company) { ?>
+                                <option value="<?php echo $company['CompanyID'];?>"><?php echo $company['CompanyName']; ?></option>
+                            <?php } ?>
+                        </select>
                     </label>
                     <input style="margin: auto" type="submit" value="Add"/>
                 </form>
@@ -84,6 +97,8 @@ if ($action == 'list_companies') {
             <table>
                 <thead>
                 <tr>
+                    <th style="text-align: left">TruckID</th>
+                    <th style="text-align: left">TruckName</th>
                     <th style="text-align: left">CompanyID</th>
                     <th style="text-align: left">CompanyName</th>
                     <th style="text-align: left">Actions</th>
@@ -91,14 +106,16 @@ if ($action == 'list_companies') {
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($companies as $company) { ?>
+                <?php foreach ($trucks as $truck) { ?>
                     <tr>
-                        <td><?php echo $company['CompanyID']; ?></td>
-                        <td><?php echo $company['CompanyName'] ?></td>
+                        <td><?php echo $truck['TruckID']; ?></td>
+                        <td><?php echo $truck['TruckName'] ?></td>
+                        <td><?php echo $truck['CompanyID'] ?></td>
+                        <td><?php echo $truck['CompanyName'] ?></td>
                         <td>
                             <form action="" method="post">
-                                <input type="hidden" name="action" value="delete_company"/>
-                                <input type="hidden" name="company_id" value="<?php echo $company['CompanyID']; ?>"/>
+                                <input type="hidden" name="action" value="delete_truck"/>
+                                <input type="hidden" name="truck_id" value="<?php echo $truck['TruckID']; ?>"/>
                                 <input style="margin: auto" type="submit" value="Delete"/>
                             </form>
                         </td>

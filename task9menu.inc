@@ -37,6 +37,7 @@
 <ul class="nav">
     <li><a href="task9.php">About</a></li>
     <li><a href="task9Models/company.php">Companies</a></li>
+    <li><a href="task9Models/trucks.php">Trucks</a></li>
     <li><a href="task9Models/levy.php">Levies</a></li>
 
 </ul>
