@@ -33,7 +33,7 @@ function argumentChecker() {
 
 ?>
 
-<html>
+<html lang="en">
 <body>
 <?php include 'menu.inc'; ?>
 
