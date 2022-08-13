@@ -1,72 +1,239 @@
-///////////// PHP ////////////////
-function getDateObject($birthday)
+/////////////// company_db.php ///////////////////////
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$conn = new PDO("mysql:host=$servername;dbname=ass3task9", $username, $password);
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$has_error = false;
+$error_msg = "";
+
+function get_companies()
 {
-    $birthday = $birthday->setTime(0, 0, 0, 0);
-    $dateObj = new stdClass;
-    $dateObj->formattedDate = $birthday->format("d/m/Y");
-    $dateObj->age = ($birthday->diff(new DateTime()))->y;
-    $dateObj->birthdayMessage = getBirthdayMessage($birthday);
-    return $dateObj;
+    $query = "SELECT * FROM ass3task9.company";
+    return $GLOBALS['conn']->query($query);
 }
 
-function getBirthdayMessage($birthday)
+function delete_company($company_id)
 {
-    $sameYearDate = new DateTime();
-    $sameYearDate->setDate($birthday->format("Y"), $sameYearDate->format("m"), $sameYearDate->format("d"))->setTime(0, 0, 0, 0);
-    if ($birthday > $sameYearDate) {
-        return "Your birthday is yet to come this year";
-    } elseif ($birthday == $sameYearDate) {
-        return "Its your birthday today";
-    } elseif ($birthday < $sameYearDate) {
-        return "Your Birthday has already passed";
-    }
-    return "N/A";
+    $query = "DELETE FROM ass3task9.company WHERE CompanyID = $company_id";
+    return $GLOBALS['conn']->query($query);
+}
+function add_company($company_name)
+{
+    $query = "INSERT INTO ass3task9.company (CompanyName) VALUES ('$company_name')";
+    return $GLOBALS['conn']->query($query);
 }
 
-///////////////////////////////////////
 
-///////////////////// HTML ///////////
+?>
 
-  <table>
-        <tr>
-            <td style="border: solid 1px" colspan="2">
-                Date: 1980-03-29
-            </td>
-        </tr>
-        <?php
-        $dateObj = getDateObject(new DateTime("1980-03-29"));
-        echo "<tr>
-                <td style=\"border: solid 1px\">
-                    Format:
-                </td>
-                <td style=\"border: solid 1px\">
-                    {$dateObj->formattedDate}
-                </td>
+//////////////////////////////////////////////////////////////////////////
 
-              </tr>";
+///////////////////// company.php /////////////////////////////////////////
+<?php
+require('company_db.php');
 
-        echo "<tr>
-                <td style=\"border: solid 1px\">
-                    Age:
-                </td>
-                <td style=\"border: solid 1px\">
-                    {$dateObj->age}
-                </td>
+$companies = array();
+if (isset($_POST['action'])) {
+    $action = $_POST['action'];
+} else if (isset($_GET['action'])) {
+    $action = $_GET['action'];
+} else {
+    $action = 'list_companies';
+}
 
-              </tr>";
+if ($action == 'list_companies') {
+    $GLOBALS['companies'] = get_companies();
+} elseif ($action == 'delete_company') {
+    delete_company($_POST['company_id']);
+    $GLOBALS['companies'] = get_companies();
+} elseif ($action == 'add_company') {
+    add_company($_POST['company_name']);
+    $GLOBALS['companies'] = get_companies();
+}
+?>
+/////////////////////////////////////////////////////////////////////////////////
+///////////////////// levy_db.php  //////////////////////////////////////////
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$conn = new PDO("mysql:host=$servername;dbname=ass3task9", $username, $password);
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$has_error = false;
+$error_msg = "";
 
-        echo "<tr>
-                <td style=\"border: solid 1px\">
-                    Birthday Message:
-                </td>
-                <td style=\"border: solid 1px\">
-                    {$dateObj->birthdayMessage}
-                </td>
+function get_levies()
+{
+    $query = "SELECT * FROM ass3task9.levyterm";
+    return $GLOBALS['conn']->query($query);
+}
 
-              </tr>"
+function delete_levy($term_id)
+{
+    $query = "DELETE FROM ass3task9.levyterm WHERE TermID = $term_id";
+    return $GLOBALS['conn']->query($query);
+}
+function add_levy($levy_type)
+{
+    $query = "INSERT INTO ass3task9.levyterm (LevyType) VALUES ('$levy_type')";
+    return $GLOBALS['conn']->query($query);
+}
+?>
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////// levy.php //////////////////////////////////////////////////
+<?php
+require('levy_db.php');
+
+$levies = array();
+if (isset($_POST['action'])) {
+    $action = $_POST['action'];
+} else if (isset($_GET['action'])) {
+    $action = $_GET['action'];
+} else {
+    $action = 'list_levies';
+}
+
+if ($action == 'list_levies') {
+    $GLOBALS['levies'] = get_levies();
+} elseif ($action == 'delete_levy') {
+    delete_levy($_POST['term_id']);
+    $GLOBALS['levies'] = get_levies();
+} elseif ($action == 'add_levy') {
+    add_levy($_POST['levy_type']);
+    $GLOBALS['levies'] = get_levies();
+}
+?>
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////// trucks_db.php  /////////////////////////////////////////////////
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$conn = new PDO("mysql:host=$servername;dbname=ass3task9", $username, $password);
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$has_error = false;
+$error_msg = "";
+
+function get_trucks()
+{
+    $query = "SELECT t.TruckID, t.TruckName, t.CompanyID, c.CompanyName FROM ass3task9.trucks t LEFT JOIN ass3task9.company c on c.CompanyID = t.CompanyID";
+    return $GLOBALS['conn']->query($query);
+}
+
+function delete_truck($truck_id)
+{
+    $query = "DELETE FROM ass3task9.trucks WHERE TruckID = $truck_id";
+    return $GLOBALS['conn']->query($query);
+}
+
+function add_truck($company_id, $truck_name)
+{
+    $query = "INSERT INTO ass3task9.trucks (CompanyID, TruckName) VALUES ($company_id,'$truck_name')";
+    return $GLOBALS['conn']->query($query);
+}
 
 
-        ?>
-    </table>
+?>
 
-/////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//////////////  trucks.php  //////////////////////////////////////////////////////
+<?php
+require('trucks_db.php');
+require('company_db.php');
+
+$trucks = array();
+$companies = get_companies();
+if (isset($_POST['action'])) {
+    $action = $_POST['action'];
+} else if (isset($_GET['action'])) {
+    $action = $_GET['action'];
+} else {
+    $action = 'list_trucks';
+}
+
+if ($action == 'list_trucks') {
+    $GLOBALS['trucks'] = get_trucks();
+} elseif ($action == 'delete_truck') {
+    delete_truck($_POST['truck_id']);
+    $GLOBALS['trucks'] = get_trucks();
+} elseif ($action == 'add_truck') {
+    add_truck($_POST['company_id'], $_POST['truck_name']);
+    $GLOBALS['trucks'] = get_trucks();
+}
+?>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////  levy_records_db.php  ///////////////////////////////////////////////////////////////////////
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$conn = new PDO("mysql:host=$servername;dbname=ass3task9", $username, $password);
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$has_error = false;
+$error_msg = "";
+
+function get_levy_records()
+{
+    $query = "SELECT
+                    lr.LevyRecordID,
+                    lr.CompanyID,
+                    c.CompanyName,
+                    lr.TruckID,
+                    t.TruckName,
+                    lr.LevyTypeID,
+                    lt.LevyType,
+                    lr.LevyAmount,
+                    DATE_FORMAT(lr.TransactionDate, '%Y-%m-%d') AS TransactionDate
+                FROM ass3task9.levyrecords lr
+                LEFT JOIN ass3task9.company c ON c.CompanyID = lr.CompanyID
+                LEFT JOIN ass3task9.trucks t ON t.TruckID = lr.TruckID
+                LEFT JOIN ass3task9.levyterm lt ON lt.TermID = lr.LevyTypeID
+    ";
+    return $GLOBALS['conn']->query($query);
+}
+
+
+function add_levy_record($company_id, $truck_id, $levy_term_id, $levy_amount)
+{
+    $query = "INSERT INTO ass3task9.levyrecords (CompanyID, TruckID, LevyTypeID, LevyAmount, TransactionDate) VALUES ($company_id, $truck_id, $levy_term_id, $levy_amount, NOW())";
+    return $GLOBALS['conn']->query($query);
+}
+
+?>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////  levy_records.php  ///////////////////////////////////////////////////////////////////////
+<?php
+require('trucks_db.php');
+require('company_db.php');
+require('levy_db.php');
+require('levy_records_db.php');
+
+$levy_records = array();
+$trucks = get_trucks();
+$companies = get_companies();
+$levies = get_levies();
+
+if (isset($_POST['action'])) {
+    $action = $_POST['action'];
+} else if (isset($_GET['action'])) {
+    $action = $_GET['action'];
+} else {
+    $action = 'list_levy_records';
+}
+
+if ($action == 'list_levy_records') {
+    $GLOBALS['levy_records'] = get_levy_records();
+} elseif ($action == 'add_levy_record') {
+    add_levy_record($_POST['company_id'], $_POST['truck_id'], $_POST['levy_term_id'], $_POST['levy_amount']);
+    $GLOBALS['levy_records'] = get_levy_records();
+}
+
+
+?>
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+

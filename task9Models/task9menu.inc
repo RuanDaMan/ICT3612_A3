@@ -39,5 +39,6 @@
     <li><a href="company.php">Companies</a></li>
     <li><a href="trucks.php">Trucks</a></li>
     <li><a href="levy.php">Levies</a></li>
+    <li><a href="levy_records.php">Levy Records</a></li>
 
 </ul>
