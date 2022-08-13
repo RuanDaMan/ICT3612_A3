@@ -24,7 +24,7 @@ class AssignmentRecord
     }
     public function __toString()
     {
-        return "$this->student_number,$this->assignment_1_mark,$this->assignment_2_mark,$this->assignment_3_mark,";
+        return "$this->student_number,$this->assignment_1_mark,$this->assignment_2_mark,$this->assignment_3_mark";
     }
 
 }

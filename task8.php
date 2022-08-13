@@ -1,84 +1,135 @@
 <?php
-$sentence = "All for one and one for all";
 
-function getLastLetters($string)
+$file = "fullrecords.txt";
+
+class AssignmentRecord
 {
-    $new_string = explode(' ', $string);
-    $tmp_string = "";
-    for ($x = 0; $x < count($new_string); $x++) {
-        $tmp_string .= substr($new_string[$x], -1);
+    private $student_number;
+    private $assignment_1_mark;
+    private $assignment_2_mark;
+    private $assignment_3_mark;
+
+    const ass_1_weight = .1;
+    const ass_2_weight = .1;
+    const ass_3_weight = .8;
+
+    public function __constructor($student_number, $assignment_1_mark, $assignment_2_mark, $assignment_3_mark)
+    {
+        $this->student_number = $student_number;
+        $this->assignment_1_mark = $assignment_1_mark;
+        $this->assignment_2_mark = $assignment_2_mark;
+        $this->assignment_3_mark = $assignment_3_mark;
     }
-    return $tmp_string;
+
+    public function getYearMark()
+    {
+        return ($this->assignment_1_mark * self::ass_1_weight) + ($this->assignment_2_mark * self::ass_2_weight) + ($this->assignment_3_mark * self::ass_3_weight);
+    }
+
+    public function __toString()
+    {
+        return "$this->student_number,$this->assignment_1_mark,$this->assignment_2_mark,$this->assignment_3_mark";
+    }
+
 }
 
-function getFirstLetters($string)
+class FullRecord extends AssignmentRecord
 {
-    $new_string = explode(' ', $string);
-    $tmp_string = "";
-    for ($x = 0; $x < count($new_string); $x++) {
-        $tmp_string .= substr($new_string[$x], 0, 1);
+    private $exam_mark;
+
+    public function __construct($student_number, $assignment_1_mark, $assignment_2_mark, $assignment_3_mark, $exam_mark)
+    {
+        parent::__constructor($student_number, $assignment_1_mark, $assignment_2_mark, $assignment_3_mark);
+        $this->exam_mark = $exam_mark;
     }
-    return $tmp_string;
+
+    public function __toString()
+    {
+        return parent::__toString() . ",$this->exam_mark";
+    }
 }
 
+$testFullRecord = new FullRecord("69723400", 70, 80, 50, 55);
 
+function WriteToFile(array $fullRecords)
+{
+    $fileContent = "";
+    foreach ($fullRecords as $fullRecord) {
+        $fileContent = $fileContent . _writeToFile($fullRecord) . "\n";
+    }
+    $file = fopen($GLOBALS['file'], 'wb');
+    fwrite($file, $fileContent);
+    fclose($file);
+}
+
+function _writeToFile(FullRecord $fullRecord)
+{
+    return $fullRecord->__toString();
+}
+
+$testFullRecord2 = new FullRecord("123465", 30, 45, 50, 63);
+$testFullRecord3 = new FullRecord("456789", 50, 70, 40, 47);
+$testFullRecord4 = new FullRecord("987654", 65, 60, 60, 40);
+$testFullRecord5 = new FullRecord("654321", 74, 14, 70, 60);
+$fullRecords = array($testFullRecord, $testFullRecord2, $testFullRecord3, $testFullRecord4, $testFullRecord5);
+WriteToFile($fullRecords);
+
+$fullRecordsUploaded = array();
+$file_uploaded = false;
+
+if (isset($_FILES['uploadedTextFile'])) {
+    $file_content = file_get_contents($_FILES['uploadedTextFile']['tmp_name']);
+    $tmp_records = explode("\n", $file_content);
+
+    foreach ($tmp_records as $tmp_record) {
+        $recordValues = explode(",", $tmp_record);
+
+        if (count($recordValues) > 1) {
+            $fullRecordsUploaded[] = new FullRecord($recordValues[0], $recordValues[1], $recordValues[2], $recordValues[3], $recordValues[4]);
+        }
+
+    }
+    $GLOBALS['file_uploaded'] = true;
+} else {
+    $GLOBALS['file_uploaded'] = false;
+}
 ?>
 
-<html>
+
+<html lang="en">
 <body>
-<?php include 'menu.inc';?>
+<?php include 'menu.inc'; ?>
 
 <main>
     <h1>Task 8</h1>
 
-    <label>Input Sentence :</label>
-    <span><?php echo $sentence; ?></span>
-    <br>
+    <h3>Task a</h3>
+    <a href="<?php echo $file ?>" download>Download fullrecords.txt</a>
 
-    <label>Length :</label>
-    <span><?php echo strlen($sentence); ?></span>
-    <br>
+    <h3>Task b</h3>
 
-    <label>Reverse :</label>
-    <span><?php echo strrev($sentence); ?></span>
-    <br>
+    <form action="task8.php" method="post" enctype="multipart/form-data">
+        Select file to upload:
+        <input type="file" name="uploadedTextFile" id="uploadedTextFile">
+        <input type="submit" value="Upload File" name="submit">
+    </form>
 
-    <label>Number of Words :</label>
-    <span><?php echo str_word_count($sentence); ?></span>
-    <br>
+    <?php if ($file_uploaded): ?>
 
-    <label>Colon Separated:</label>
-    <span><?php echo str_replace(" ", ":", $sentence); ?></span>
-    <br>
+        <h2>Uploaded Full Records</h2>
+        <ul>
+            <?php foreach ($fullRecordsUploaded as $record) { ?>
+                <li><?php echo $record->__toString(); ?></li>
+            <?php } ?>
+        </ul>
 
-    <label>A and a replaced by * :</label>
-    <span><?php echo str_ireplace("a", "*", $sentence); ?></span>
-    <br>
 
-    <label>Last letters in lowercase:</label>
-    <span><?php echo strtolower(getLastLetters($sentence)); ?></span>
-    <br>
-
-    <label>Uppercase words:</label>
-    <span><?php echo ucwords($sentence); ?></span>
-    <br>
-
-    <label>Uppercase words without spaces:</label>
-    <span><?php echo str_ireplace(" ", "", ucwords($sentence)); ?></span>
-    <br>
-
-    <label>First letters in uppercase:</label>
-    <span><?php echo strtoupper(getFirstLetters($sentence)); ?></span>
-    <br>
-    <br>
-    <br>
+    <?php endif; ?>
 
     <iframe src="task8.txt" height="500" width="1500">
-        Your browser does not support iframes. </iframe>
+        Your browser does not support iframes.
+    </iframe>
 </main>
 
 </body>
 </html>
-
-<!--<iframe src="task1.txt" height="400" width="1200">-->
-<!--    Your browser does not support iframes. </iframe>-->
