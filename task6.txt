@@ -1,34 +1,103 @@
-////// PHP ///////
+<?php
 
-$day = 0;
 
-$payPerHour = 0;
+$servername = "localhost";
+$username = "root";
+//$username = "root";
+$password = "";
+//$password = "";
+$conn = new PDO("mysql:host=$servername;dbname=ass3task5", $username, $password);
+//$conn = new PDO("mysql:host=$servername;dbname=ass3task4", $username, $password);
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$has_error = false;
+$error_msg = "";
 
-function getPayPerHour($day)
+$actors = array();
+$role_types = array();
+$film_titles = array();
+$film_actor_roles = array();
+$radio_query = array();
+
+
+function fetchAll()
 {
-    return $day == 1 ? 19.20 : ($day == 7 ? 14.75 : 10.00);
+    try {
+
+        $GLOBALS['actors'] = $GLOBALS['conn']->query("SELECT * FROM ass3task5.actors ORDER BY ActorID");
+
+
+        $GLOBALS['role_types'] = $GLOBALS['conn']->query("SELECT * FROM ass3task5.roletypes ORDER BY RoleTypeID");
+
+
+        $GLOBALS['film_titles'] = $GLOBALS['conn']->query("SELECT * FROM ass3task5.filmtitles ORDER BY FilmTitleID");
+
+        $GLOBALS['film_actor_roles'] = $GLOBALS['conn']->query("SELECT far.FilmTitleID,
+                                                                        ft.FilmTitle,
+                                                                        ft.FilmDuration,
+                                                                        ft.FilmStory,
+                                                                        far.ActorID,
+                                                                        a.ActorFullName,
+                                                                        far.RoleTypeID, 
+                                                                        rt.RoleType,                                                                        
+                                                                        far.CharacterName, 
+                                                                        far.CharacterDescription 
+                                                                FROM ass3task5.filmactorroles far 
+                                                                LEFT JOIN ass3task5.filmtitles ft on far.FilmTitleID = ft.FilmTitleID
+                                                                LEFT JOIN ass3task5.roletypes rt on far.RoleTypeID = rt.RoleTypeID
+                                                                LEFT JOIN ass3task5.actors a on far.ActorID = a.ActorID
+                                                                ORDER BY far.FilmTitleID");
+
+        if (isset($_POST['query'])) {
+            $query_choice = $_POST['query'];
+            if ($query_choice == "select_1") {
+                $GLOBALS['radio_query'] = $GLOBALS['conn']->query("SELECT far.FilmTitleID,
+                                                                        far.ActorID,
+                                                                        far.RoleTypeID,                                                                        
+                                                                        far.CharacterName, 
+                                                                        far.CharacterDescription 
+                                                                FROM ass3task5.filmactorroles far 
+                                                                ORDER BY CharacterName");
+            }
+            if ($query_choice == "select_2") {
+                $GLOBALS['radio_query'] = $GLOBALS['conn']->query("SELECT far.FilmTitleID,
+                                                                        far.ActorID,
+                                                                        far.RoleTypeID,                                                                        
+                                                                        far.CharacterName, 
+                                                                        far.CharacterDescription 
+                                                                FROM ass3task5.filmactorroles far 
+                                                                WHERE far.CharacterName LIKE '%ac%' ");
+            }
+            if ($query_choice == "select_3") {
+                $GLOBALS['radio_query'] = $GLOBALS['conn']->query("SELECT far.FilmTitleID,
+                                                                        far.ActorID,
+                                                                        far.RoleTypeID,                                                                        
+                                                                        far.CharacterName, 
+                                                                        far.CharacterDescription,
+                                                                        rt.RoleType
+                                                                FROM ass3task5.filmactorroles far 
+                                                                INNER JOIN ass3task5.roletypes rt ON rt.RoleTypeID = far.RoleTypeID");
+            }
+            if ($query_choice == "select_4") {
+                $GLOBALS['radio_query'] = $GLOBALS['conn']->query("SELECT far.FilmTitleID,
+                                                                        far.ActorID,
+                                                                        far.RoleTypeID,                                                                        
+                                                                        far.CharacterName, 
+                                                                        far.CharacterDescription
+                                                                FROM ass3task5.filmactorroles far 
+                                                                WHERE far.RoleTypeID = 3 OR far.RoleTypeID = 5");
+            }
+            if ($query_choice == "select_5") {
+                $GLOBALS['radio_query'] = $GLOBALS['conn']->query("SELECT MAX(ft.FilmDuration) AS FilmDuration FROM ass3task5.filmtitles ft ");
+            }
+        }
+
+    } catch (PDOException $e) {
+        $GLOBALS['has_error'] = true;
+        $GLOBALS['error_msg'] = "Connection failed: " . $e->getMessage();
+    }
 }
 
-function qualifyForPromotion($age, $monthlyIncome)
-{
-    return $age < 46 && $monthlyIncome >= 10000 ? true : ($age > 45 && $monthlyIncome >= 20000);
-}
+fetchAll();
 
-/////////////////////////
 
-//////////// A ROW FOR CALLING FIRST FUNCTION /////////////
-        <tr>
-            <td style="border-right: solid black 0.8px">-1</td>
-            <td style="border-right: solid black 0.8px"><?php echo getPayPerHour(-1) ?></td>
-        </tr>
-/////////////////////////
-
-///////////// A ROW FOR CALLING SECOND FUNCTION    /////////////
-        <tr>
-            <td style="border-right: solid black 0.8px">1</td>
-            <td style="border-right: solid black 0.8px">45</td>
-            <td style="border-right: solid black 0.8px">11000</td>
-            <td style="border-right: solid black 0.8px"><?php echo qualifyForPromotion(45, 11000) ? "Qualified" : "Not Qualified" ?></td>
-        </tr>
-
-/////////////////////////
+?>
