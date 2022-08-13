@@ -1,14 +1,12 @@
 <?php
 
-
 $servername = "localhost";
-$username = "root";
-//$username = "root";
-$password = "";
-//$password = "";
-$conn = new PDO("mysql:host=$servername;dbname=ass3task5", $username, $password);
-//$conn = new PDO("mysql:host=$servername;dbname=ass3task4", $username, $password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$username = "id19414547_root";
+$password = "R^JXo(n8UFUCYTNr";
+
+//$conn = new PDO("mysql:host=$servername;dbname=id19414547_ict3612", $username, $password);
+$conn = new mysqli($servername, $username, $password);
+//$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $has_error = false;
 $error_msg = "";
 
@@ -23,13 +21,13 @@ function fetchAll()
 {
     try {
 
-        $GLOBALS['actors'] = $GLOBALS['conn']->query("SELECT * FROM ass3task5.actors ORDER BY ActorID");
+        $GLOBALS['actors'] = $GLOBALS['conn']->query("SELECT * FROM id19414547_ict3612.Actors ORDER BY ActorID");
 
 
-        $GLOBALS['role_types'] = $GLOBALS['conn']->query("SELECT * FROM ass3task5.roletypes ORDER BY RoleTypeID");
+        $GLOBALS['role_types'] = $GLOBALS['conn']->query("SELECT * FROM id19414547_ict3612.RoleTypes ORDER BY RoleTypeID");
 
 
-        $GLOBALS['film_titles'] = $GLOBALS['conn']->query("SELECT * FROM ass3task5.filmtitles ORDER BY FilmTitleID");
+        $GLOBALS['film_titles'] = $GLOBALS['conn']->query("SELECT * FROM id19414547_ict3612.FilmTitles ORDER BY FilmTitleID");
 
         $GLOBALS['film_actor_roles'] = $GLOBALS['conn']->query("SELECT far.FilmTitleID,
                                                                         ft.FilmTitle,
@@ -41,10 +39,10 @@ function fetchAll()
                                                                         rt.RoleType,                                                                        
                                                                         far.CharacterName, 
                                                                         far.CharacterDescription 
-                                                                FROM ass3task5.filmactorroles far 
-                                                                LEFT JOIN ass3task5.filmtitles ft on far.FilmTitleID = ft.FilmTitleID
-                                                                LEFT JOIN ass3task5.roletypes rt on far.RoleTypeID = rt.RoleTypeID
-                                                                LEFT JOIN ass3task5.actors a on far.ActorID = a.ActorID
+                                                                FROM id19414547_ict3612.FilmActorRoles far 
+                                                                LEFT JOIN id19414547_ict3612.FilmTitles ft on far.FilmTitleID = ft.FilmTitleID
+                                                                LEFT JOIN id19414547_ict3612.RoleTypes rt on far.RoleTypeID = rt.RoleTypeID
+                                                                LEFT JOIN id19414547_ict3612.Actors a on far.ActorID = a.ActorID
                                                                 ORDER BY far.FilmTitleID");
 
         if (isset($_POST['query'])) {
@@ -55,7 +53,7 @@ function fetchAll()
                                                                         far.RoleTypeID,                                                                        
                                                                         far.CharacterName, 
                                                                         far.CharacterDescription 
-                                                                FROM ass3task5.filmactorroles far 
+                                                                FROM id19414547_ict3612.FilmActorRoles far 
                                                                 ORDER BY CharacterName");
             }
             if ($query_choice == "select_2") {
@@ -64,7 +62,7 @@ function fetchAll()
                                                                         far.RoleTypeID,                                                                        
                                                                         far.CharacterName, 
                                                                         far.CharacterDescription 
-                                                                FROM ass3task5.filmactorroles far 
+                                                                FROM id19414547_ict3612.FilmActorRoles far 
                                                                 WHERE far.CharacterName LIKE '%ac%' ");
             }
             if ($query_choice == "select_3") {
@@ -74,8 +72,8 @@ function fetchAll()
                                                                         far.CharacterName, 
                                                                         far.CharacterDescription,
                                                                         rt.RoleType
-                                                                FROM ass3task5.filmactorroles far 
-                                                                INNER JOIN ass3task5.roletypes rt ON rt.RoleTypeID = far.RoleTypeID");
+                                                                FROM id19414547_ict3612.FilmActorRoles far 
+                                                                INNER JOIN id19414547_ict3612.RoleTypes rt ON rt.RoleTypeID = far.RoleTypeID");
             }
             if ($query_choice == "select_4") {
                 $GLOBALS['radio_query'] = $GLOBALS['conn']->query("SELECT far.FilmTitleID,
@@ -83,11 +81,11 @@ function fetchAll()
                                                                         far.RoleTypeID,                                                                        
                                                                         far.CharacterName, 
                                                                         far.CharacterDescription
-                                                                FROM ass3task5.filmactorroles far 
+                                                                FROM id19414547_ict3612.FilmActorRoles far 
                                                                 WHERE far.RoleTypeID = 3 OR far.RoleTypeID = 5");
             }
             if ($query_choice == "select_5") {
-                $GLOBALS['radio_query'] = $GLOBALS['conn']->query("SELECT MAX(ft.FilmDuration) AS FilmDuration FROM ass3task5.filmtitles ft ");
+                $GLOBALS['radio_query'] = $GLOBALS['conn']->query("SELECT MAX(ft.FilmDuration) AS FilmDuration FROM id19414547_ict3612.FilmTitles ft ");
             }
         }
 
@@ -149,7 +147,7 @@ fetchAll();
 <body>
 <?php include 'menu.inc'; ?>
 <main>
-    <h1>Task 5</h1>
+    <h1>Task 6</h1>
 
 
     <?php if ($has_error): ?>
@@ -436,7 +434,7 @@ fetchAll();
     <?php endif; ?>
 
 
-    <iframe src="task5.txt" height="500" width="1500">
+    <iframe src="task6.txt" height="500" width="1500">
         Your browser does not support iframes.
     </iframe>
 </main>
